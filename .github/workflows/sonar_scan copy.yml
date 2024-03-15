@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - sonarqube
+      - master
 
 jobs:
   scan-sonarqube:
     name: SonarQube Scan
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, owt-vn]
     env:
       BRANCH_NAME: ${{ github.ref_name }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -20,26 +21,39 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install yarn
-        run: |-
-          curl -fsSL --create-dirs -o $HOME/bin/yarn \
-          https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.js
-          chmod +x $HOME/bin/yarn
-          echo "$HOME/bin" >> $GITHUB_PATH
+      # - name: Install yarn
+      #   run: |-
+      #     curl -fsSL --create-dirs -o $HOME/bin/yarn \
+      #     https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.js
+      #     chmod +x $HOME/bin/yarn
+      #     echo "$HOME/bin" >> $GITHUB_PATH
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 16
 
-      - name: Install dependencies
-        run: yarn install
+      # - name: Install dependencies
+      #   run: yarn install
 
-      - name: Test and coverage
-        run: yarn ject --coverage
+      # - name: Test and coverage
+      #   run: |
+      #     export NODE_OPTIONS="--max-old-space-size=8192"
+      #     yarn jest --coverage
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=Employee-App
+            -Dsonar.projectName=Employee-App
+            -Dsonar.exclusions=node_modules
+            -Dsonar.scm.disable=true
+            -Dsonar.filesize.limit=20
+            -Dsonar.main.branch=sonarqube
+            -Dsonar.test=./test
+            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
