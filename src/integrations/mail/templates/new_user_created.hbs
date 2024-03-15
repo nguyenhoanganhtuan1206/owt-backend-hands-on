@@ -1,0 +1,45 @@
+<html>
+    <body>
+        <div><b>Dear {{fullName}}</b></div>
+        <br />
+        <br />
+        <br />
+        <div>Welcome to OWT Viet Nam Employee App! We would like to provide you with your
+            default login credentials so that you can get started right away.</div>
+        <br />
+        <div>
+        <div><span>Email:</span>
+            <b>{{companyEmail}}</b>
+        </div>
+        <div><span>Password:</span>
+            <b>{{password}}</b>
+        </div>
+        </div>
+        <br />
+        <div>Please click on below link to activate your account.</div>
+        <br />
+        <div style='text-align: center;'>
+            <a href="{{loginUserPageUrl}}">
+                <input type="submit" class="button" value="Activate Account" style="
+                    background-color: #6366f1;
+                    border: none;
+                    color: white;
+                    padding: 8px 48px;
+                    text-align: center;
+                    text-decoration: none;
+                    font-size: 14px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                " />
+            </a>
+        </div>
+        <br />
+        <div>If the link is not working, copy below link into your web browser and
+            activate the account.</div>
+        <div><u><i>{{loginUserPageUrl}}</i></u></div>
+        <br />
+        <br />
+        <div>Thank you.</div>
+        <div>Admin</div>
+    </body>
+</html>

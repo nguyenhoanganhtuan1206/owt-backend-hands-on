@@ -1,0 +1,12 @@
+.git
+dist
+node_modules
+db-data
+.vuepress
+.vscode
+docs
+Dockerfile
+docker-compose.yml
+docker-compose_staging.yml
+docker-compose.test.yml
+docker-compose_mysql.yml

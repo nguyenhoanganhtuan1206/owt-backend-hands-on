@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<link href='https://fonts.googleapis.com/css?family=Calibri:400,700,400italic,700italic' rel='stylesheet'>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            font-family: "Calibri";
+        }
+
+        p {
+            font-size: 14;
+        }
+
+        .cv {
+            padding: 0 50px 0 50px;
+        }
+
+        .header {
+            padding: 0 20px 0 20px;
+        }
+
+        .red {
+            color: #D2372D;
+        }
+
+        .avatar {
+            float: left;
+            width: 120px;
+        }
+
+        .logo {
+            width: 150px;
+            float: right
+        }
+
+        table {
+            width: 100%;
+        }
+
+        .key-education {
+            padding-left: 50px;
+            width: 35%;
+        }
+
+        .key-employment-history {
+            padding-left: 50px;
+            width: 35%;
+        }
+
+        .key-skill {
+            padding-left: 50px;
+            width: 30%;
+        }
+
+        .project {
+            padding-left: 20px;
+            page-break-inside: avoid;
+        }
+
+        .key-project {
+            width: 30%;
+        }
+
+        td {
+            vertical-align: top;
+        }
+
+        .basic-information {
+            min-height: 100px;
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        li {
+            padding-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 50px;
+        }
+
+        .certification-value {
+            padding: 8px 0 0 8px;
+        }
+
+        .introduction {
+          text-align: justify
+        }
+
+        .roles-and-responsibilities{
+          text-align: justify
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cv">
+        <div class="header">
+            <div class="basic-information">
+                <div>
+                    <img class="avatar" src={{user.photo}} />
+                </div>
+                <div>
+                    <h1 class="fullname">{{user.firstName}} {{user.lastName}}</h1>
+                    <h2 class="position red">{{position}}</h2>
+                </div>
+                <div>
+                    <img class="logo" src="data:image/png;base64,{{logoBase64String}}" />
+                </div>
+            </div>
+            <div class="introduction"><p>{{user.introduction}}</p></div>
+        </div>
+        <div class="body">
+            {{#if educations.length}}
+                <div class="item">
+                    <div class="title red">
+                        <h3>EDUCATION</h3>
+                    </div>
+                    <div class="list">
+                        <table>
+                            {{#each educations}}
+                                <tr>
+                                    <td class="key-education">&bull;&nbsp; {{formatDate dateFrom}} - {{formatDate dateTo}}:</td>
+                                    <td>{{institution}} <br /><i>{{degree}}</i></td>
+                                </tr>
+                            {{/each}}
+                        </table>
+                    </div>
+                </div>
+                <hr>
+            {{/if}}
+            {{#if certifications.length}}
+            <div class="item">
+                <div class="title red">
+                    <h3>CERTIFICATIONS</h3>
+                </div>
+                <div class="list">
+                    <ul>
+                        {{#each certifications}}
+                            <li>
+                                <b>&bull;&nbsp; {{name}}</b>
+                                <div class="certification-value">&nbsp;&nbsp;<i>{{issuingOrganisation}}</i></div>
+                                <div class="certification-value">&nbsp;&nbsp;Issued: {{formatDate issueDate}}</div>
+                                <div class="certification-value">&nbsp;&nbsp;Expiration: {{formatDate expirationDate}}</div>
+                                <div class="certification-value">&nbsp;&nbsp;Credential ID: {{credentialId}}</div>
+                                {{#if credentialUrl}}
+                                    <div class="certification-value">
+                                        <a href="{{credentialUrl}}" target="_blank" class="certification-value">Show Credential</a>
+                                    </div>
+                                {{/if}}
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            {{/if}}
+            {{#if userSkills.length}}
+            <div class="item">
+                <div class="title red">
+                    <h3>SKILLS</h3>
+                </div>
+                <div class="list">
+                    <table>
+                        {{#each userSkills}}
+                            <tr>
+                                <td class="key-skill" style="white-space:nowrap;">&bull;&nbsp; {{skill.name}}: </td>
+                                <td>
+                                    {{#for 1 level}}
+                                        <span class="filled-dot" style="font-size: large;">●</span>
+                                    {{/for}}
+                                    {{#for 1 (subtract 5 level)}}
+                                        <span class="empty-dot" style="font-size: large;">○</span>
+                                    {{/for}}
+                                </td>
+                            </tr>
+                        {{/each}}
+                    </table>
+                </div>
+            </div>
+            <hr>
+            {{/if}}
+            {{#if employmentHistories.length}}
+            <div class="item">
+                <div class="title red">
+                    <h3>EMPLOYMENT HISTORY</h3>
+                </div>
+                <div class="list">
+                    <table>
+                        {{#each employmentHistories}}
+                            <tr>
+                                <td class="key-employment-history">&bull;&nbsp; {{formatDate dateFrom}} - {{#if dateTo}}{{formatDate dateTo}}{{else}}Present{{/if}}:</td>
+                                <td>{{company}}</td>
+                            </tr>
+                        {{/each}}
+                    </table>
+                </div>
+            </div>
+            <hr>
+            {{/if}}
+            {{#if experiences.length}}
+            <div class="item">
+                <div class="title red">
+                    <h3>EXPERIENCES</h3>
+                </div>
+                <div class="list">
+                    {{#each experiences}}
+                        <div class="project">
+                            <table>
+                                <tr>
+                                    <td colspan="2">
+                                        <h4>
+                                            {{projectName}} <br/>
+                                            <i>({{formatDate dateFrom}} - {{#if dateTo}}{{formatDate dateTo}}{{else}}Present{{/if}})</i>
+                                        </h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="key-project">Domain: </td>
+                                    <td>{{domain}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="key-project">Description: </td>
+                                    <td>{{description}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="key-project">Tech stacks: </td>
+                                    <td>
+                                        {{#each experienceSkills}}
+                                            {{skill.name}}{{#unless @last}}, {{/unless}}
+                                        {{/each}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="key-project">Roles & responsibilities: </td>
+                                    <td class="roles-and-responsibilities"><p style="white-space: pre; margin: 0; text-wrap: wrap;">{{{rolesAndResponsibilities}}}</p></td>
+                                </tr>
+                            </table>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</body>
+
+</html>

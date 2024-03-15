@@ -1,0 +1,53 @@
+name: Lint
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  pull_request:
+    branches:
+      - main
+      - development
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: [self-hosted]
+    permissions: write-all
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Install yarn
+        run: |-
+          curl -fsSL --create-dirs -o $HOME/bin/yarn \
+          https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.js
+          chmod +x $HOME/bin/yarn
+          echo "$HOME/bin" >> $GITHUB_PATH
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      # ESLint and Prettier must be in `package.json`
+      - name: Install Node.js dependencies
+        run: yarn install
+
+      - name: Run build
+        run: |
+          npm run build:prod
+
+      - name: Slack Notification
+        if: failure()
+        run: |
+          chmod +x ./scripts/slack_notify_error.sh
+          ./scripts/slack_notify_error.sh
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          eslint: true
+          eslint_extensions: ts

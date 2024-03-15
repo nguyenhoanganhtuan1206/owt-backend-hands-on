@@ -1,0 +1,52 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Document</title>
+    <style>
+      p { margin: 0; padding: 0; display: inline;}
+    </style>
+  </head>
+  <body>
+    <div><strong>Dear Mr./Ms. {{pmName}}</strong></div>
+    <br />
+    <br />
+    <div>You are receiving this email because a member from a project which is
+      currently managed by you has submitted a request to take a vacation. The
+      details of the request was as follows.</div>
+    <br />
+    <p style='margin-bottom: 0;'>
+      <div>Name: <b>{{fullName}}</b></div>
+      <div>Email: <b>{{companyEmail}}</b></div>
+      <div>Trigram: <b>{{trigram}}</b></div>
+      <div>Requested duration:
+        <b>{{totalDays}} day(s) (From {{dateFrom}} - To {{dateTo}})</b></div>
+      <div>Details: <b>{{{details}}}</b></div>
+    </p>
+    <br />
+    <p>Please kindly click on the following to approve/refuse this request.</p>
+    <br />
+    <div style='text-align: center;'>
+      <a
+        href='{{timeOffRequestUrl}}'
+        style='
+            text-decoration: none;            
+            background-color: #156608;
+            border: 1px solid #1F50FF;
+            color: #FEFEFF;
+            padding: 10px 30px;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block;'
+      >
+        Response
+      </a>
+    </div>
+    <br />
+    <br />
+    <br />
+    <p>Thank you for your time.</p>
+  </body>
+</html>

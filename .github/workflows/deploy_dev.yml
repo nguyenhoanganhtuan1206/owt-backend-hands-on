@@ -1,0 +1,127 @@
+name: deploy dev environment
+
+on:
+  push:
+    branches:
+      - development
+      - feature/modify-ci-cd
+
+jobs:
+  #   lintAnsible:
+  #     runs-on: [self-hosted, owt]
+  #     steps:
+  #     - name: checkout repo
+  #       uses: actions/checkout@v3
+  #     - name: Install tools
+  #       run: |
+  #         sudo apt install wget -y
+  #     - name: Lint Ansible Playbook
+  #       uses: ansible/ansible-lint@v6
+  #       with:
+  #         path: "./.github/ansible/playbook.yml"
+  deployAnsible:
+    # needs: lintAnsible
+    runs-on: [self-hosted, owt]
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VPN_SERVER_IP: ${{ secrets.VPN_SERVER_IP }}
+      VPN_IPSEC_PSK: ${{ secrets.VPN_IPSEC_PSK }}
+      VPN_USER: ${{ secrets.VPN_USER }}
+      VPN_PASSWORD: ${{ secrets.VPN_PASSWORD }}
+      SSH_USERNAME: ${{ secrets.SSH_USERNAME_DEV }}
+      SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_DEV }}
+      REPO: ${{ github.repository }}
+      REPO_NAME: ${{ github.event.repository.name }}
+      BRANCH_NAME: ${{ github.ref_name }}
+      AWS_S3_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID_DEV }}
+      AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY_DEV }}
+      AWS_S3_BUCKET_REGION: ${{ secrets.AWS_S3_BUCKET_REGION_DEV }}
+      AWS_S3_API_VERSION: ${{ secrets.AWS_S3_API_VERSION_DEV }}
+      AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME_DEV }}
+      DB_DATABASE: ${{ secrets.DB_DATABASE_DEV }}
+      DB_HOST: ${{ secrets.DB_HOST_DEV }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD_DEV }}
+      DB_PORT: ${{ secrets.DB_PORT_DEV }}
+      DB_TYPE: ${{ secrets.DB_TYPE_DEV }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME_DEV }}
+      JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY_DEV }}
+      JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY_DEV }}
+      LOGIN_PAGE_URL: ${{ secrets.LOGIN_PAGE_URL_DEV }}
+      MAIL_AUTH_PASSWORD: ${{ secrets.MAIL_AUTH_PASSWORD_DEV }}
+      MAIL_AUTH_USERNAME: ${{ secrets.MAIL_AUTH_USERNAME_DEV }}
+      MAIL_FROM_EMAIL: ${{ secrets.MAIL_FROM_EMAIL_DEV }}
+      MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME_DEV }}
+      MAIL_HOST: ${{ secrets.MAIL_HOST_DEV }}
+      MAIL_PORT: ${{ secrets.MAIL_PORT }}
+      PGADMIN_DEFAULT_EMAIL: ${{ secrets.PGADMIN_DEFAULT_EMAIL_DEV }}
+      TIME_OFF_REQUEST_URL: ${{ secrets.TIME_OFF_REQUEST_URL_DEV }}
+      PGADMIN_DEFAULT_PASSWORD: ${{ secrets.PGADMIN_DEFAULT_PASSWORD_DEV }}
+      ROOT_USER_EMAIL: ${{ secrets.ROOT_USER_EMAIL_DEV }}
+      ROOT_USER_PASSWORD: ${{ secrets.ROOT_USER_PASSWORD_DEV }}
+      ROOT_FIRST_ASSISTANT_EMAIL: ${{ secrets.ROOT_FIRST_ASSISTANT_EMAIL_DEV }}
+      ROOT_FIRST_ASSISTANT_PASSWORD: ${{ secrets.ROOT_FIRST_ASSISTANT_PASSWORD_DEV }}
+      ROOT_SECOND_ASSISTANT_EMAIL: ${{ secrets.ROOT_SECOND_ASSISTANT_EMAIL_DEV }}
+      ROOT_SECOND_ASSISTANT_PASSWORD: ${{ secrets.ROOT_SECOND_ASSISTANT_PASSWORD_DEV }}
+      LOGIN_USER_PAGE_URL: ${{ secrets.LOGIN_USER_PAGE_URL_DEV }}
+      LOGIN_ADMIN_PAGE_URL: ${{ secrets.LOGIN_ADMIN_PAGE_URL_DEV }}
+      TIME_KEEPER_SERVER_URL: ${{ secrets.TIME_KEEPER_SERVER_URL_DEV }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      #   - name: Install VPN
+      #     run: |
+      #       sudo apt-get update
+      #       sudo apt-get -y install strongswan xl2tpd
+      #       sudo cp ./.github/vpn-config/ipsec.conf /etc/ipsec.conf
+      #       sudo cp ./.github/vpn-config/ipsec.secrets /etc/ipsec.secrets
+      #       sudo chmod 600 /etc/ipsec.secrets
+      #       sudo cp ./.github/vpn-config/xl2tpd.conf /etc/xl2tpd/xl2tpd.conf
+      #       sudo cp ./.github/vpn-config/options.l2tpd.client /etc/ppp/options.l2tpd.client
+      #       sudo chmod 600 /etc/ppp/options.l2tpd.client
+      #       mkdir -p /var/run/xl2tpd
+      #       sudo touch /var/run/xl2tpd/l2tp-control
+      #       sudo systemctl restart strongswan-starter
+      #       sudo systemctl restart xl2tpd
+      #       sudo ipsec up myvpn
+      #       sudo ls -la /var/run/xl2tpd/
+      #       sudo echo "c myvpn" | sudo tee -a /var/run/xl2tpd/l2tp-control
+      #   - name: Sleep for 5 seconds
+      #     uses: jakejarvis/wait-action@master
+      #     with:
+      #       time: '5s'
+      #   - name: Add Route
+      #     run: |
+      #       ifconfig
+      #       sudo ip route
+      #       echo "sudo route add $VPN_SERVER_IP gw 10.1.0.1"
+      #       sudo route add $VPN_SERVER_IP gw 10.1.0.1
+      #       echo "sudo route add default dev ppp0"
+      #       sudo route add default dev ppp0
+      #       echo "wget -qO- http://ipv4.icanhazip.com; echo"
+      #       wget -qO- http://ipv4.icanhazip.com; echo
+      - name: Install
+        run: |
+          sudo apt-add-repository ppa:ansible/ansible
+          sudo apt update
+          sudo apt install ansible -y
+      - name: Deploy Ansible
+        run: |
+          ansible-playbook -i .github/ansible-dev/hosts.yml -v .github/ansible-dev/playbook.yml
+
+  notificationSlack:
+    runs-on: [self-hosted, owt]
+    permissions: write-all
+    needs: deployAnsible
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+      - name: Notify Deploy Success
+        if: success()
+        run: |
+          chmod +x ./scripts/slack_notify_success.sh
+          ./scripts/slack_notify_success.sh
+      - name: Notify Deploy Failed
+        if: failure()
+        run: |
+          chmod +x ./scripts/slack_notify_error.sh
+          ./scripts/slack_notify_error.sh

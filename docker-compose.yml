@@ -1,0 +1,16 @@
+version: '3'
+services:
+  app:
+    image: owt_employee_app:latest
+    env_file:
+      - .env
+    container_name: employee_app_backend_dev
+    restart: always
+    ports:
+      - '$PORT:$PORT'
+  mailcatcher:
+    restart: on-failure
+    image: dockage/mailcatcher:0.8.2
+    ports:
+      - '1080:1080'
+      - '1025:1025'

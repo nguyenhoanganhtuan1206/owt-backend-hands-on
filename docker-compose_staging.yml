@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  app_staging:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    container_name: owt_employee_app_staging
+    ports:
+      - "3009:3009"
+    volumes:
+      - ~/employee-staging/owt-employee-app-backend-logs:/usr/src/app/logs
+  employee_pgadmin_staging:
+    container_name: employee_pgadmin_staging
+    image: dpage/pgadmin4
+    ports:
+      - "8182:80"
+    volumes:
+      - /data/pgadmin:/root/.pgadmin
+    env_file:
+      - .env
+  mailcatcher_staging:
+    restart: on-failure
+    container_name: owt_employee_app_mailcatcher_staging
+    image: dockage/mailcatcher:0.8.2
+    ports:
+    - "1081:1080"
+    - "1026:1025"

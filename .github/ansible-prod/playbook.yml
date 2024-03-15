@@ -1,0 +1,52 @@
+- name: Deploy PROD env Backend
+  hosts: prod_env
+  remote_user: "{{ lookup('env', 'SSH_USERNAME') }}"
+  vars:
+    ansible_password: "{{ lookup('env', 'SSH_PASSWORD') }}"
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    SSH_USERNAME: "{{ lookup('env', 'SSH_USERNAME') }}"
+    REPO: "{{ lookup('env', 'REPO') }}"
+    REPO_NAME: "{{ lookup('env', 'REPO_NAME') }}"
+    BRANCH_NAME: "{{ lookup('env', 'BRANCH_NAME') }}"
+    DOCKERHUB_TOKEN: "{{ lookup('env', 'DOCKERHUB_TOKEN') }}"
+    DOCKERHUB_USERNAME: "{{ lookup('env', 'DOCKERHUB_USERNAME') }}"
+  gather_facts: true
+  tasks:
+    - name: "Backup ssh config file"
+      shell: "cp config config.bk"
+      args:
+        chdir: /home/{{ SSH_USERNAME }}/.ssh/
+    - name: "Copy ssh config"
+      shell: "cp {{ REPO_NAME }}.config config"
+      args:
+        chdir: /home/{{ SSH_USERNAME }}/.ssh/
+    - name: "Remove old source code"
+      shell: "rm -rf {{ REPO_NAME }}/"
+      args:
+        chdir: /home/{{ SSH_USERNAME }}/
+    - name: "Clone Source code"
+      shell: "git clone git@github.com:{{ REPO }}.git"
+      args:
+        chdir: /home/{{ SSH_USERNAME }}/
+    - name: "Checkout branch"
+      shell: "git checkout {{ BRANCH_NAME }}"
+      args:
+        chdir: /home/{{ SSH_USERNAME }}/{{ REPO_NAME }}/
+    - name: Copy env file
+      shell: "cp ~/{{ REPO_NAME }}.env .env"
+      args:
+        chdir: /home/{{ SSH_USERNAME }}/{{ REPO_NAME }}/
+    - name: "Build docker image"
+      shell: "docker build --platform=linux/arm64 -t owt_employee_app ."
+      args:
+        chdir: /home/{{ SSH_USERNAME }}/{{ REPO_NAME }}/
+    - name: "Deploy apps"
+      shell: "docker compose up -d --no-deps app"
+      args:
+        chdir: /home/{{ SSH_USERNAME }}/{{ REPO_NAME }}/
+    - name: "Recover ssh config"
+      shell: "cp config.bk config"
+      args:
+        chdir: /home/{{ SSH_USERNAME }}/.ssh/
+    - name: Remove image unused
+      shell: "docker images prune -a -f &"

@@ -1,0 +1,32 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Document</title>
+    <style>
+      p { margin: 0; padding: 0; display: inline;}
+    </style>
+  </head>
+  <body>
+    <div><b>Dear {{gender}} {{fullName}}</b></div>
+    <br />
+    <br />
+    <div>This email is aimed to inform you about the update status of your
+      Time-Off request.</div>
+    <br />
+    <p>
+      <div>Requested duration:
+        <b>{{totalDays}} day(s) (From {{dateFrom}} - To {{dateTo}})</b></div>
+      <div>Submitted on: <b>{{createdAt}}</b></div>
+      <div>Details: <b>{{{details}}}</b></div>
+    </p>
+    <br />
+    <div>Status: <b>{{status}} on {{updatedAt}} by your {{reviewer}}</b></div>
+    <br />
+    <div>Noted: <b><i>{{{note}}}</i></b></div>
+    <br />
+    <br />
+    <br />
+    <p>Regards,</p>
+  </body>
+</html>

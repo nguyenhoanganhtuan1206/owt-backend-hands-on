@@ -1,0 +1,8 @@
+export enum RequestStatusType {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REFUSED = 'REFUSED',
+  PROCESSING = 'PROCESSING',
+  ASSISTANT = 'ASSISTANT',
+  BALANCE = 'BALANCE',
+}

@@ -1,0 +1,25 @@
+name: Deploy STAGING env
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deployAnsible:
+    runs-on: [self-hosted]
+    env:
+      SSH_USERNAME: ${{ secrets.SSH_USERNAME_STAGING }}
+      SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_STAGING }}
+      REPO: ${{ github.repository }}
+      REPO_NAME: ${{ github.event.repository.name }}
+      BRANCH_NAME: ${{ github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install
+        run: |
+          sudo apt-add-repository ppa:ansible/ansible
+          sudo apt update
+          sudo apt install ansible -y
+      - name: Deploy Ansible
+        run: |
+          ansible-playbook -i .github/ansible-staging/hosts.yml -v .github/ansible-staging/playbook.yml

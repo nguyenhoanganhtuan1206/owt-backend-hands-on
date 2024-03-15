@@ -1,0 +1,51 @@
+name: Deploy PROD env
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deployAnsible:
+    runs-on: [self-hosted]
+    env:
+      SSH_USERNAME: ${{ secrets.SSH_USERNAME_PROD }}
+      SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PROD }}
+      REPO: ${{ github.repository }}
+      REPO_NAME: ${{ github.event.repository.name }}
+      BRANCH_NAME: ${{ github.ref_name }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      ECR_REPOSITORY_NAME: ${{ secrets.ECR_REPOSITORY_NAME }}
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKER_HUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install
+        run: |
+          sudo apt-add-repository ppa:ansible/ansible
+          sudo apt update
+          sudo apt install ansible -y
+      - name: Deploy Ansible
+        id: deploy
+        run: |
+          ansible-playbook -i .github/ansible-prod/hosts.yml -v .github/ansible-prod/playbook.yml
+
+#   notificationSlack:
+#     runs-on: [self-hosted, owt]
+#     permissions: write-all
+#     needs: deployAnsible
+#     env:
+#       GH_TOKEN: ${{ secrets.GH_TOKEN }}
+#     steps:
+#       - name: Notify success
+#         if: ${{ needs.deployAnsible.outputs.deploy == 'success' }}
+#         run: |
+#           chmod +x ./scripts/slack_notify_success.sh
+#           ./scripts/slack_notify_success.sh
+#       - name: Notify Deploy Status
+#         if: ${{ needs.deployAnsible.outputs.deploy == 'failure' }}
+#         run: |
+#           chmod +x ./scripts/slack_notify_error.sh
+#           ./scripts/slack_notify_error.sh

@@ -1,0 +1,37 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Document</title>
+    <style>
+      p { margin: 0; padding: 0; display: inline;}
+    </style>
+  </head>
+  <body>
+    <div><b>Dear {{gender}} {{fullNameAssistant}}</b></div>
+    <br />
+    <br />
+    <div>You are receiving this email because a member from OWT VN has submitted a
+      request to take a vacation. The details of the request was as follows.</div>
+    <br />
+    <p>
+      <div>Name: <b>{{fullNameUser}}</b></div>
+      <div>Email: <b>{{companyEmail}}</b></div>
+      <div>Trigram: <b>{{trigram}}</b></div>
+      <div>Requested duration: <b>{{totalDays}} day(s) (From {{dateFrom}} - To {{dateTo}})</b></div>
+      <div>Details: <b>{{{details}}}</b></div>
+    </p>
+    <br />
+    <p>
+      <div>PM’s name: <b>{{pmName}}</b></div>
+      <div>PM’s email: <b>{{pmMail}}</b></div>
+    </p>
+    <br />
+    <br />
+    <p>Please contact the PM to get his approval for this request.</p>
+    <br />
+    <br />
+    <br />
+    <p>Thank you for your time.</p>
+  </body>
+</html>
