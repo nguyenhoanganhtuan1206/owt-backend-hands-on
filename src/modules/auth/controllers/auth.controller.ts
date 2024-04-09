@@ -75,7 +75,7 @@ export class AuthController {
     return 'Testing_2';
   }
 
-  @Get('test_1')
+  @Get('test')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({})
   testing_3(): string {
