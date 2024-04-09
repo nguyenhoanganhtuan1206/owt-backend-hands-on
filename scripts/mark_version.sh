@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
- 
+
 # Exit script if command fails or uninitialized variables used
 set -euo pipefail
 
 # ==================================
 # Create git tag for new version
 # ==================================
- 
+
 GIT_TAG_RELEASE=v1.1.1
 # == Define tag release
 if [ -z "$GIT_TAG_RELEASE" ]; then
@@ -40,7 +40,7 @@ echo "RELEASE_BRANCH_NAME=$RELEASE_BRANCH_NAME"
 
 if git checkout -b $RELEASE_BRANCH_NAME; then
     echo "Created branch release $RELEASE_BRANCH_NAME successful"
-else 
+else
     echo "Failed to create branch release $RELEASE_BRANCH_NAME. Exiting script."
     exit 1
 fi
@@ -48,7 +48,7 @@ fi
 # == Push release branch to remote
 if git push origin "$RELEASE_BRANCH_NAME"; then
     echo "Pushed branch release $RELEASE_BRANCH_NAME to remote successfully"
-else 
+else
     echo "Failed to push branch release $RELEASE_BRANCH_NAME to remote. Exiting script."
     exit 1
 fi
