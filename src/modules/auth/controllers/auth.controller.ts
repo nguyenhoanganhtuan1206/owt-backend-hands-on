@@ -68,6 +68,13 @@ export class AuthController {
     return 'Testing_1';
   }
 
+  @Get('test_2')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({})
+  testing_2(): string {
+    return 'Testing_2';
+  }
+
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
