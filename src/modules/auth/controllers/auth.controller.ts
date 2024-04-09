@@ -57,7 +57,7 @@ export class AuthController {
     @Get('test')
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({})
-    async testing(): string {
+    testing(): string {
         return 'Testing';
     }
 
