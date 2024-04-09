@@ -31,13 +31,6 @@ export class AuthController {
         private authService: AuthService,
     ) { }
 
-    @Get('testing')
-    @HttpCode(HttpStatus.OK)
-    @ApiOkResponse({})
-    userTesting(): string {
-        return "Testing";
-    }
-
     @Post('admin/login')
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
@@ -59,6 +52,13 @@ export class AuthController {
         const userDto = userEntity.toDto();
 
         return new LoginPayloadDto(userDto, token);
+    }
+
+    @Get('test')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({})
+    testing(): string {
+        return 'Testing';
     }
 
     @Post('login')
