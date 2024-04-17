@@ -61,12 +61,45 @@ export class AuthController {
     return 'Testing';
   }
 
-  @Get('test_1')
-  @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({})
-  testing_1(): string {
-    return 'Testing_1';
-  }
+    @Get('test_1')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({})
+    testing_1(): string {
+        return 'Testing_1';
+    }
+
+    @Get('test_2')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({})
+    testing_2(): string {
+        return 'Testing_2';
+    }
+
+    @Get('test_3')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({})
+    testing_3(): string {
+        return 'Testing_3';
+    }
+
+    @Post('login')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({
+        type: LoginPayloadDto,
+        description: 'User info with access token',
+    })
+    async userLogin(
+        @Body() userLoginDto: UserLoginDto,
+    ): Promise<LoginPayloadDto> {
+        const userEntity = await this.authService.validateUser(userLoginDto);
+        const userRoles = userEntity.permissions.map(
+            (permission) => permission.role,
+        );
+        const token = await this.authService.createAccessToken({
+            roles: userRoles,
+            userId: userEntity.id,
+        });
+>>>>>>> 9bb0aac25446b3614eb406bbf1e01f208d306902
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
