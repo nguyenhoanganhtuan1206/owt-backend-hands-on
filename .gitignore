@@ -82,5 +82,5 @@ db-data
 .cache
 .DS_Store
 
-# Ignore script mark
-scripts/release_version.sh
+# == Script
+scripts/mark_version.shb09b1c
