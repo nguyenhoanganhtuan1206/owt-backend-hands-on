@@ -83,4 +83,4 @@ db-data
 .DS_Store
 
 # == Script
-scripts/mark_version.shb09b1c
+scripts/mark_version.sh
